@@ -4,12 +4,12 @@ public class Task implements Serializable {
 
     public String taskName;
     public String taskDescription;
-    protected int taskCode;
-    protected TaskStatus taskStatus = new TaskStatus();
+    protected String taskCode;
+    protected TaskStatus taskStatus;
 
     Task(){
-        this.taskCode = Manager.newTaskCode;
-        Manager.newTaskCode += 1;
+        this.taskCode = java.util.UUID.randomUUID().toString();
+
     }
 
     public void setTaskName(String name) {
@@ -20,13 +20,12 @@ public class Task implements Serializable {
         this.taskDescription = description;
     }
 
-    public void setTaskStatus(String status) {
-        this.taskStatus.changeTaskStatus(status);
-    }
 
     public String printTask() {
-        return String.format("Code: %s \n Name: %s \n Description: %s \n Status: %s",this.taskCode,this.taskName,this.taskDescription,this.taskStatus.getNumericalTaskStatus());
+        return String.format("Code: %s \n Name: %s \n Description: %s \n Status: %s",this.taskCode,this.taskName,this.taskDescription,this.taskStatus);
     }
 
-
+    public void setTaskStatus(String status){
+        this.taskStatus = TaskStatus.valueOf(status);
+    }
 }

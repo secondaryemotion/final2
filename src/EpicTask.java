@@ -1,20 +1,11 @@
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.HashMap;
 
 public class EpicTask extends Task {
 
-    public ArrayList<Integer> subTasksCodes = new ArrayList<>();
+    public ArrayList<String> subTasksCodes = new ArrayList<>();
 
-    public void addSubTaskCode(int taskCode) {
-        if (taskCode < Manager.newTaskCode) {
-            this.subTasksCodes.add(taskCode);
-            this.checkEpicTaskStatus();
-            Manager.subTasksDatabase.get(taskCode).forceEpicTaskCode(this.taskCode);
-        }
-    }
-
-    public void forceSubTaskCode(int taskCode) {
+    public void addSubTaskCode(String taskCode){
         this.subTasksCodes.add(taskCode);
     }
 
@@ -28,30 +19,33 @@ public class EpicTask extends Task {
         return epicTaskPrinted;
     }
 
-    public String printEpicTaskSubTasks() {
+    public String printEpicTaskSubTasks(HashMap<String,SubTask> subTasks) {
         String subTasksPrinted = "List of subtasks: \n";
-        for (int i = 0; i < this.subTasksCodes.toArray().length; i++) {
-            subTasksPrinted += Manager.subTasksDatabase.get(this.subTasksCodes.get(i)).printTask() + " \n";
+        for (String i : this.subTasksCodes) {
+            subTasksPrinted += subTasks.get(i).printTask() + " \n";
         }
         return subTasksPrinted;
     }
 
-    public void checkEpicTaskStatus() {
-        int status = 1;
-        for (Object o : this.subTasksCodes.toArray()) {
-            if (Manager.subTasksDatabase.get(o).getNumericalTaskStatus() == 0) {
-                status = 0;
+    public void checkEpicTaskStatus(HashMap<String,SubTask> subTasks) {
+        int counter = 0;
+        for (String i : this.subTasksCodes) {
+            if (subTasks.get(i).taskStatus == TaskStatus.IN_PROGRESS) {
+                this.setTaskStatus("IN_PROGRESS");
                 break;
+            } else if (subTasks.get(i).taskStatus == TaskStatus.NEW) {
+                counter += 1;
             } else {
-                status += Manager.subTasksDatabase.get(o).getNumericalTaskStatus();
+                counter -= 1;
             }
         }
-        if (status == this.subTasksCodes.toArray().length) {
-            this.taskStatus.changeNumericalTaskStatus(1);
-        } else if (status != 0) {
-            this.taskStatus.changeNumericalTaskStatus(2);
+        if (counter == this.subTasksCodes.size()){
+            this.setTaskStatus("NEW");
+        } else if (-1*counter == this.subTasksCodes.size()){
+            this.setTaskStatus("DONE");
         } else {
-            this.taskStatus.changeNumericalTaskStatus(0);
+            this.setTaskStatus("IN_PROGRESS");
         }
     }
-}
+    }
+

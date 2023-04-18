@@ -1,20 +1,13 @@
 public class SubTask extends Task {
 
-    protected int epicTaskCode;
+    protected String epicTaskCode;
 
-    public void setEpicTaskCode(int taskCode) {
-        if (taskCode < Manager.newTaskCode) {
-            this.epicTaskCode = taskCode;
-            Manager.epicTasksDatabase.get(taskCode).forceSubTaskCode(this.taskCode);
-            Manager.epicTasksDatabase.get(taskCode).checkEpicTaskStatus();
-        }
-    }
 
-    public void forceEpicTaskCode(int taskCode) {
+    public void setEpicTaskCode(String taskCode) {
         this.epicTaskCode = taskCode;
     }
 
-    public int getEpicTaskCode() {
+    public String getEpicTaskCode() {
         return this.epicTaskCode;
     }
 
@@ -22,11 +15,8 @@ public class SubTask extends Task {
         return this.printTask() + "\n Epic code: " + this.getEpicTaskCode();
     }
 
-    public String getTaskStatus() {
-        return this.taskStatus.getTaskStatus();
+    public TaskStatus getTaskStatus() {
+        return this.taskStatus;
     }
 
-    public int getNumericalTaskStatus() {
-        return this.taskStatus.getNumericalTaskStatus();
-    }
 }
